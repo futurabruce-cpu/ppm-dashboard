@@ -57,9 +57,30 @@ export default async function SubmissionsPage({
 
   return (
     <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Submissions</h1>
-        <p className="text-gray-500 text-sm mt-1">Fire alarm service sheets</p>
+      <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Worksheets</h1>
+          <p className="text-gray-500 text-sm mt-1">Fire alarm service sheets</p>
+        </div>
+        <div className="flex gap-3">
+          <a
+            href="https://futurabruce-cpu.github.io/lfl-ppm/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 rounded-lg text-sm font-bold text-black"
+            style={{ background: '#F5A800' }}
+          >
+            + New LFL Sheet
+          </a>
+          <a
+            href="https://futurabruce-cpu.github.io/jobRAEF/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 rounded-lg text-sm font-bold text-white bg-gray-700 hover:bg-gray-600"
+          >
+            + New Voca Sheet
+          </a>
+        </div>
       </div>
       <SubmissionsTable
         submissions={(submissions as never[]) || []}
