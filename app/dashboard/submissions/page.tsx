@@ -10,6 +10,7 @@ interface SearchParams {
   engineer?: string
   search?: string
   status?: string
+  company_name?: string
 }
 
 export default async function SubmissionsPage({
@@ -44,6 +45,7 @@ export default async function SubmissionsPage({
   if (params.engineer) query = query.eq('engineer_id', params.engineer)
   if (params.search) query = query.ilike('site_name', `%${params.search.trim()}%`)
   if (params.status) query = query.eq('status', params.status)
+  if (params.company_name) query = query.ilike('company_name', `%${params.company_name}%`)
 
   const { data: submissions } = await query
 

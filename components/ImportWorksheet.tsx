@@ -8,6 +8,7 @@ interface ParsedFields {
   site_address: string | null
   service_date: string | null
   engineer_name: string | null
+  company_name: string | null
   sheet_type: string | null
 }
 
@@ -45,10 +46,10 @@ export default function ImportWorksheet() {
       if (data.fields) {
         setFields(data.fields)
       } else {
-        setFields({ site_name: '', site_address: '', service_date: new Date().toISOString().split('T')[0], engineer_name: '', sheet_type: 'voca' })
+        setFields({ site_name: '', site_address: '', service_date: new Date().toISOString().split('T')[0], engineer_name: '', company_name: '', sheet_type: 'voca' })
       }
     } catch {
-      setFields({ site_name: '', site_address: '', service_date: new Date().toISOString().split('T')[0], engineer_name: '', sheet_type: 'voca' })
+      setFields({ site_name: '', site_address: '', service_date: new Date().toISOString().split('T')[0], engineer_name: '', company_name: '', sheet_type: 'voca' })
     } finally {
       setParsing(false)
     }
@@ -73,6 +74,7 @@ export default function ImportWorksheet() {
           service_date: data.get('service_date'),
           sheet_type: data.get('sheet_type'),
           engineer_name: data.get('engineer_name'),
+          company_name: data.get('company_name'),
           pdf_base64: pdfBase64,
         }),
       })
@@ -157,6 +159,15 @@ export default function ImportWorksheet() {
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-1">Engineer</label>
                   <input name="engineer_name" type="text" defaultValue={fields.engineer_name ?? ''} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1">Company</label>
+                  <select name="company_name" defaultValue={fields.company_name ?? 'Voca'} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                    <option value="GOW Systems">GOW Systems</option>
+                    <option value="Ladrillos">Ladrillos</option>
+                    <option value="Voca">Voca</option>
+                    <option value="Other">Other</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-1">Type</label>

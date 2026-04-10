@@ -10,6 +10,7 @@ interface Submission {
   service_date: string | null
   sheet_type: 'lfl' | 'voca'
   status: string | null
+  company_name: string | null
   created_at: string
   pdf_url: string | null
   profiles?: { full_name: string | null } | null
@@ -20,7 +21,7 @@ interface Props {
   submissions: Submission[]
   profile: { role: string; company_id?: string | null }
   engineers: { id: string; full_name: string | null }[]
-  filters: { sheet_type?: string; from?: string; to?: string; engineer?: string; search?: string; status?: string }
+  filters: { sheet_type?: string; from?: string; to?: string; engineer?: string; search?: string; status?: string; company_name?: string }
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -94,6 +95,16 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
       {/* Filters */}
       <div className="flex flex-wrap gap-2 mb-5">
         <select
+          defaultValue={filters.company_name ?? ''}
+          onChange={e => applyFilter('company_name', e.target.value)}
+          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+        >
+          <option value="">All Companies</option>
+          <option value="GOW Systems">GOW Systems</option>
+          <option value="Ladrillos">Ladrillos</option>
+          <option value="Voca">Voca</option>
+        </select>
+        <select
           defaultValue={filters.sheet_type ?? ''}
           onChange={e => applyFilter('sheet_type', e.target.value)}
           className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -165,11 +176,14 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                     <div className="font-bold text-gray-900 text-base">{s.site_name ?? '—'}</div>
                     {s.site_address && <div className="text-gray-500 text-xs mt-0.5">{s.site_address}</div>}
                   </div>
-                  <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold uppercase ml-2 shrink-0 ${
-                    s.sheet_type === 'lfl' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
-                  }`}>
-                    {s.sheet_type === 'lfl' ? 'Ladrillos' : 'GOW'}
-                  </span>
+                  <div className="flex flex-col items-end gap-1 ml-2 shrink-0">
+                    <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold uppercase ${
+                      s.sheet_type === 'lfl' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
+                    }`}>
+                      {s.sheet_type === 'lfl' ? 'Ladrillos' : 'GOW'}
+                    </span>
+                    {s.company_name && <span className="text-xs font-semibold text-gray-500">{s.company_name}</span>}
+                  </div>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
                   <span>📅 {s.service_date ? new Date(s.service_date).toLocaleDateString('en-GB') : '—'}</span>
@@ -218,6 +232,7 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                   {profile.role === 'superadmin' && (
                     <th className="text-left px-5 py-3 font-semibold text-gray-600">Company</th>
                   )}
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Company</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Type</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Status</th>
                   <th className="text-right px-5 py-3 font-semibold text-gray-600">Actions</th>
@@ -244,6 +259,7 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                         {s.sheet_type === 'lfl' ? 'Ladrillos' : 'GOW'}
                       </span>
                     </td>
+                    <td className="px-5 py-3 text-gray-600 text-sm">{s.company_name ?? '—'}</td>
                     <td className="px-5 py-3">
                       <StatusDropdown id={s.id} status={s.status} isAdmin={profile.role !== 'engineer'} />
                     </td>
