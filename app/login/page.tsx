@@ -49,7 +49,7 @@ export default function LoginPage() {
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
         <div className="mb-8 text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={GOW_LOGO_B64} alt="GOW Systems" width={96} height={96} className="object-contain mx-auto mb-4" />
+          <img src={GOW_LOGO_B64} alt="GOW Systems" width={144} height={144} className="object-contain mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900">Worksheets</h1>
           <p className="text-gray-500 mt-1 text-sm">Fire Alarm Service Management</p>
         </div>
