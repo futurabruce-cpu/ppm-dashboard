@@ -48,10 +48,8 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#1a1a2e' }}>
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="w-28 h-28 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{background:'#0a0a1a'}}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={GOW_LOGO_B64} alt="GOW Systems" width={96} height={96} className="object-contain" />
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={GOW_LOGO_B64} alt="GOW Systems" width={96} height={96} className="object-contain mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900">Worksheets</h1>
           <p className="text-gray-500 mt-1 text-sm">Fire Alarm Service Management</p>
         </div>
