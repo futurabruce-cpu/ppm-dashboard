@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseAdminClient } from '@/lib/supabase/admin'
 
+export const config = { api: { bodyParser: { sizeLimit: '20mb' } } }
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -18,18 +20,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: corsHeaders })
   }
 
-  const formData = await req.formData()
-  const id = formData.get('id') as string
-  const pdfFile = formData.get('pdf') as File
+  const contentType = req.headers.get('content-type') || ''
+  let id: string
+  let buf: Buffer
 
-  if (!id || !pdfFile) {
+  if (contentType.includes('application/json')) {
+    const body = await req.json()
+    id = body.id
+    buf = Buffer.from(body.pdf_base64 as string, 'base64')
+  } else {
+    const formData = await req.formData()
+    id = formData.get('id') as string
+    const pdfFile = formData.get('pdf') as File
+    buf = Buffer.from(await pdfFile.arrayBuffer())
+  }
+
+  if (!id || !buf) {
     return NextResponse.json({ error: 'Missing id or pdf' }, { status: 400, headers: corsHeaders })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const admin = getSupabaseAdminClient() as any
 
-  const buf = Buffer.from(await pdfFile.arrayBuffer())
   const filename = `${Date.now()}-${id}.pdf`
 
   const { error: uploadErr } = await admin.storage
