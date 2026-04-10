@@ -20,7 +20,7 @@ interface Props {
   submissions: Submission[]
   profile: { role: string; company_id?: string | null }
   engineers: { id: string; full_name: string | null }[]
-  filters: { sheet_type?: string; from?: string; to?: string; engineer?: string }
+  filters: { sheet_type?: string; from?: string; to?: string; engineer?: string; search?: string }
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -81,6 +81,16 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
 
   return (
     <div>
+      {/* Search */}
+      <div className="mb-4">
+        <input
+          type="text"
+          defaultValue={filters.search ?? ''}
+          onChange={e => applyFilter('search', e.target.value)}
+          placeholder="🔍 Search by site name..."
+          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+        />
+      </div>
       {/* Filters */}
       <div className="flex flex-wrap gap-2 mb-5">
         <select
