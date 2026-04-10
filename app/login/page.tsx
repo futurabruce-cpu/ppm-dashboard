@@ -47,7 +47,9 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#1a1a2e' }}>
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
         <div className="mb-8 text-center">
-          <img src="/gow-logo.png" alt="GOW Systems" className="w-24 h-24 object-contain mx-auto mb-4" />
+          <div className="w-28 h-28 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{background:'#0a0a1a'}}>
+            <img src="/gow-logo.png" alt="GOW Systems" className="w-24 h-24 object-contain" />
+          </div>
           <h1 className="text-2xl font-bold text-gray-900">Worksheets</h1>
           <p className="text-gray-500 mt-1 text-sm">Fire Alarm Service Management</p>
         </div>
