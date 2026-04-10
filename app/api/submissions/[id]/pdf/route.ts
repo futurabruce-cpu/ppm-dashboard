@@ -24,7 +24,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: 'No PDF provided' }, { status: 400, headers: corsHeaders })
   }
 
-  const admin = getSupabaseAdminClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const admin = getSupabaseAdminClient() as any
   const buf = Buffer.from(pdf_base64, 'base64')
   const filename = `${Date.now()}-${id}.pdf`
 
@@ -36,8 +37,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: uploadErr.message }, { status: 500, headers: corsHeaders })
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: publicData } = (admin.storage as any).from('pdfs').getPublicUrl(filename)
+  const { data: publicData } = admin.storage.from('pdfs').getPublicUrl(filename)
   const pdf_url = publicData.publicUrl
 
   const { error: updateErr } = await admin
