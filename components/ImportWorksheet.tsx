@@ -48,10 +48,10 @@ export default function ImportWorksheet() {
       if (data.fields) {
         setFields(data.fields)
       } else {
-        setFields({ site_name: '', site_address: '', service_date: new Date().toISOString().split('T')[0], engineer_name: '', company_name: '', job_type: '', sheet_type: 'voca' })
+        setFields({ site_name: '', site_address: '', service_date: new Date().toISOString().split('T')[0], engineer_name: '', company_name: '', job_type: '', follow_up_required: false, sheet_type: 'voca' })
       }
     } catch {
-      setFields({ site_name: '', site_address: '', service_date: new Date().toISOString().split('T')[0], engineer_name: '', company_name: '', job_type: '', sheet_type: 'voca' })
+      setFields({ site_name: '', site_address: '', service_date: new Date().toISOString().split('T')[0], engineer_name: '', company_name: '', job_type: '', follow_up_required: false, sheet_type: 'voca' })
     } finally {
       setParsing(false)
     }
