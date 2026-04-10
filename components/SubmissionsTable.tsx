@@ -103,22 +103,23 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                   )}
                 </div>
                 <div className="flex gap-2">
-                  <Link
-                    href={`/dashboard/submissions/${s.id}`}
-                    className="flex-1 text-center px-3 py-2 rounded-lg text-sm font-bold text-black"
-                    style={{ background: '#F5A800' }}
-                  >
-                    View
-                  </Link>
-                  {s.pdf_url && (
+                  {s.pdf_url ? (
                     <a
                       href={s.pdf_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 text-center px-3 py-2 rounded-lg text-sm font-bold bg-gray-100 text-gray-700"
+                      className="flex-1 text-center px-3 py-2 rounded-lg text-sm font-bold text-black"
+                      style={{ background: '#F5A800' }}
                     >
-                      📄 PDF
+                      📄 View PDF
                     </a>
+                  ) : (
+                    <Link
+                      href={`/dashboard/submissions/${s.id}`}
+                      className="flex-1 text-center px-3 py-2 rounded-lg text-sm font-bold bg-gray-100 text-gray-500"
+                    >
+                      View
+                    </Link>
                   )}
                 </div>
               </div>
@@ -164,23 +165,24 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                         {s.sheet_type === 'lfl' ? 'Ladrillos' : 'GOW'}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-right space-x-2 whitespace-nowrap">
-                      <Link
-                        href={`/dashboard/submissions/${s.id}`}
-                        className="inline-block px-3 py-1 rounded-lg text-xs font-bold text-black"
-                        style={{ background: '#F5A800' }}
-                      >
-                        View
-                      </Link>
-                      {s.pdf_url && (
+                    <td className="px-5 py-3 text-right whitespace-nowrap">
+                      {s.pdf_url ? (
                         <a
                           href={s.pdf_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-block px-3 py-1 rounded-lg text-xs font-bold bg-gray-100 text-gray-700"
+                          className="inline-block px-3 py-1 rounded-lg text-xs font-bold text-black"
+                          style={{ background: '#F5A800' }}
                         >
-                          PDF
+                          📄 View PDF
                         </a>
+                      ) : (
+                        <Link
+                          href={`/dashboard/submissions/${s.id}`}
+                          className="inline-block px-3 py-1 rounded-lg text-xs font-bold bg-gray-100 text-gray-500"
+                        >
+                          View
+                        </Link>
                       )}
                     </td>
                   </tr>
