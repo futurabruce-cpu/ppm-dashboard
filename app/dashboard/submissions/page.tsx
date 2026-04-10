@@ -70,15 +70,7 @@ export default async function SubmissionsPage({
             className="px-4 py-2 rounded-lg text-sm font-bold text-black"
             style={{ background: '#F5A800' }}
           >
-            + New Ladrillos PPM
-          </a>
-          <a
-            href="https://futurabruce-cpu.github.io/jobRAEF/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 rounded-lg text-sm font-bold text-white bg-gray-700 hover:bg-gray-600"
-          >
-            + New GOW PPM
+            + New Worksheet
           </a>
         </div>
       </div>
