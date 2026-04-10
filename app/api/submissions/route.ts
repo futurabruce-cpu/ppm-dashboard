@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseAdminClient } from '@/lib/supabase/admin'
+import { generateSubmissionPDF } from '@/lib/generate-pdf'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -32,23 +33,35 @@ export async function POST(req: NextRequest) {
 
   const { data: profile, error: profileErr } = await admin
     .from('profiles')
-    .select('id, company_id')
+    .select('id, company_id, full_name')
     .eq('id', authUser.id)
     .single()
   if (profileErr || !profile) return NextResponse.json({ error: 'Profile not found' }, { status: 404, headers: corsHeaders })
 
   let pdf_url: string | null = null
 
-  if (pdf_base64) {
-    const buf = Buffer.from(pdf_base64 as string, 'base64')
+  // Generate PDF server-side immediately — no upload needed from device
+  try {
+    const pdfBuf = await generateSubmissionPDF({
+      sheet_type,
+      site_name,
+      site_address,
+      service_date,
+      answers,
+      engineer_name: profile.full_name || authUser.email?.split('@')[0] || null,
+      company_name: company_name || null,
+      job_type: job_type || null,
+    })
     const filename = `${Date.now()}-${authUser.id}.pdf`
     const { error: uploadErr } = await admin.storage
       .from('pdfs')
-      .upload(filename, buf, { contentType: 'application/pdf', upsert: false })
+      .upload(filename, pdfBuf, { contentType: 'application/pdf', upsert: false })
     if (!uploadErr) {
       const { data: publicData } = admin.storage.from('pdfs').getPublicUrl(filename)
       pdf_url = publicData.publicUrl
     }
+  } catch (e) {
+    console.error('PDF generation failed:', e)
   }
 
   const { data: submission, error: insertErr } = await admin
