@@ -6,65 +6,74 @@ export async function POST(req: NextRequest) {
   const { pdf_base64 } = await req.json()
   if (!pdf_base64) return NextResponse.json({ error: 'No PDF' }, { status: 400 })
 
-  // Extract text from PDF
-  let pdfText = ''
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const pdfParse = require('pdf-parse')
+    // Upload PDF to OpenAI files API
     const buf = Buffer.from(pdf_base64, 'base64')
-    const parsed = await pdfParse(buf)
-    pdfText = parsed.text
-  } catch (e) {
-    console.error('PDF parse error:', e)
-    return NextResponse.json({ fields: null })
-  }
+    const formData = new FormData()
+    formData.append('file', new Blob([buf], { type: 'application/pdf' }), 'worksheet.pdf')
+    formData.append('purpose', 'assistants')
 
-  if (!pdfText.trim()) return NextResponse.json({ fields: null })
+    const uploadRes = await fetch('https://api.openai.com/v1/files', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
+      body: formData,
+    })
+    const uploadData = await uploadRes.json()
+    const fileId = uploadData.id
 
-  // Send text to OpenAI for structured extraction
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o-mini',
-      messages: [
-        {
-          role: 'system',
-          content: `You are a data extraction assistant. Extract structured fields from job card text. Return ONLY valid JSON with these exact keys:
-- site_name: the customer/site name (e.g. "VUE CINEMA EASTLEIGH")
-- site_address: the site address (not billing address)
-- service_date: date in YYYY-MM-DD format
-- engineer_name: the engineer/resource who did the work
-- company_name: the company that carried out the work — look for company header/branding (e.g. "Voca", "GOW Systems", "Ladrillos")
-- job_type: map to exactly one of: "PPM", "Return Visit", "Small Works", "Callout" — if job type contains P1/P2/P3/P4/P5/P6/P7 or callout/emergency use "Callout"; return visit = "Return Visit"; small/minor works = "Small Works"; PPM/service/maintenance = "PPM"
-- sheet_type: "voca" for Voca Fire jobs, "lfl" for Ladrillos jobs, "other" for anything else
-If a field cannot be found, use null.`,
-        },
-        {
-          role: 'user',
-          content: `Extract fields from this job card:\n\n${pdfText.slice(0, 4000)}`,
-        },
-      ],
-      max_tokens: 500,
-    }),
-  })
+    if (!fileId) throw new Error('File upload failed: ' + JSON.stringify(uploadData))
 
-  if (!res.ok) {
-    console.error('OpenAI error:', await res.text())
-    return NextResponse.json({ fields: null })
-  }
+    // Use responses API with file_search to extract text
+    const chatRes = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: `Extract structured fields from this job card PDF. Return ONLY valid JSON with these keys:
+- site_name: customer/site name
+- site_address: site address (not billing)  
+- service_date: YYYY-MM-DD format
+- engineer_name: engineer who did the work
+- company_name: company that carried out the work (e.g. "Voca", "GOW Systems", "Ladrillos")
+- job_type: one of exactly: "PPM", "Return Visit", "Small Works", "Callout" (P1-P7/callout/emergency = Callout)
+- sheet_type: "voca" for Voca Fire, "lfl" for Ladrillos, "other" otherwise
+Use null for any field not found.`,
+          },
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: 'Extract fields from this job card PDF.' },
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              { type: 'file', file: { file_id: fileId } } as any,
+            ],
+          },
+        ],
+        max_tokens: 500,
+      }),
+    })
 
-  const data = await res.json()
-  const content = data.choices?.[0]?.message?.content ?? ''
+    // Clean up file
+    fetch(`https://api.openai.com/v1/files/${fileId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` },
+    }).catch(() => {})
 
-  try {
+    if (!chatRes.ok) throw new Error('Chat failed: ' + await chatRes.text())
+
+    const chatData = await chatRes.json()
+    const content = chatData.choices?.[0]?.message?.content ?? ''
     const jsonMatch = content.match(/\{[\s\S]*\}/)
     const fields = jsonMatch ? JSON.parse(jsonMatch[0]) : null
     return NextResponse.json({ fields })
-  } catch {
+
+  } catch (e) {
+    console.error('parse-pdf error:', e)
     return NextResponse.json({ fields: null })
   }
 }
