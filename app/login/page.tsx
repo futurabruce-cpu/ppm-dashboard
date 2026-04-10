@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import NextImage from 'next/image'
 import { getSupabaseBrowserClient } from '@/lib/supabase/client'
 
 // Map username → email (Supabase requires email format)
@@ -48,7 +49,7 @@ export default function LoginPage() {
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
         <div className="mb-8 text-center">
           <div className="w-28 h-28 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{background:'#0a0a1a'}}>
-            <img src="/gow-logo.png" alt="GOW Systems" className="w-24 h-24 object-contain" />
+            <NextImage src="/gow-logo.webp" alt="GOW Systems" width={96} height={96} className="object-contain" unoptimized />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Worksheets</h1>
           <p className="text-gray-500 mt-1 text-sm">Fire Alarm Service Management</p>
