@@ -61,9 +61,35 @@ export async function generateSubmissionPDF(submission: {
   })
   y += 4
 
+  // Label maps for known question IDs
+  const QUESTION_LABELS: Record<string, string> = {
+    // Callout questions
+    c1: 'Work Carried Out', c2: 'Picture', c3: 'Equipment Used', c4: 'Number of Engineers',
+    c6: 'System Current Status', c8t: 'Time on Site', c7: 'Return Visit Required',
+    c8: 'Engineer Sign Off', c9: 'Customer Sign Off',
+    // PPM questions
+    1: 'Date of Service', 2: 'Next Service Date', 3: 'Logbook / Defects',
+    4: 'Defects Document', 5: 'Call Points Visible', 6: 'Exits – Call Points',
+    7: 'New Partitions', 8: 'Storage Clearance', 9: 'Detector Clearance',
+    10: 'Occupancy Changes', 11: 'Cable Condition', 12: 'False Alarm Records',
+    13: 'Battery Condition', 14: 'Battery Voltage', 15: 'Charge Voltage',
+    16: 'Battery Load Test', 17: 'Batteries >4 Years', 18: 'Call Point Switches',
+    19: 'Areas / Zones Tested', 20: 'Detectors Tested', 21: 'Call Points Tested',
+    22: 'ARC Signalling', 23: 'Remote Signalling', 24: 'Fire Brigade Link',
+    25: 'Sounders / Visual', 26: 'Beam Detectors', 27: 'Aspirating Systems',
+    28: 'Suppression Systems', 29: 'Door Holders', 30: 'Cause & Effect',
+    31: 'Voice Alarm', 32: 'Ancillary Equipment', 33: 'PAVA System',
+    34: 'PAVA Batteries', 35: 'PAVA Signalling', 36: 'Photo – PAVA Batteries',
+    37: 'Photo – Fire Panel', 38: 'Panel Clean', 39: 'Defects Identified',
+    40: 'Outstanding Defects', 41: 'Comments', 42: 'Next Service',
+    // Follow-up (excluded from main callout PDF)
+    cf1: null, cf2: null, cf3: null,
+    customer_name: 'Customer Name',
+  }
+
   // Answers
   const answers = submission.answers || {}
-  
+
   doc.setFillColor(230, 230, 230)
   doc.rect(margin, y - 2, contentW, 7, 'F')
   doc.setFontSize(10)
@@ -78,11 +104,16 @@ export async function generateSubmissionPDF(submission: {
 
   for (const [key, val] of Object.entries(answers)) {
     if (!val || key.startsWith('sig_')) continue
+    // Skip follow-up answers from main PDF
+    if (key.startsWith('cf')) continue
+    // Skip if explicitly null in label map
+    if (key in QUESTION_LABELS && QUESTION_LABELS[key] === null) continue
+    const label = QUESTION_LABELS[key] || key
     checkPage(14)
     doc.setFontSize(9)
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(80, 80, 80)
-    doc.text(String(key), margin, y)
+    doc.text(String(label), margin, y)
     y += 5
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(40, 40, 40)
