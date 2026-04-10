@@ -250,15 +250,12 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50">
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Date</th>
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Job No</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Site</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Address</th>
                   {profile.role !== 'engineer' && (
                     <th className="text-left px-5 py-3 font-semibold text-gray-600">Engineer</th>
                   )}
-                  {profile.role === 'superadmin' && (
-                    <th className="text-left px-5 py-3 font-semibold text-gray-600">Company</th>
-                  )}
-                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Job No</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Company</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Job Type</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Follow-up</th>
@@ -282,9 +279,6 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                     <td className="px-5 py-3 text-gray-500 max-w-[200px] truncate">{s.site_address ?? '—'}</td>
                     {profile.role !== 'engineer' && (
                       <td className="px-5 py-3 text-gray-600">{s.profiles?.full_name ?? '—'}</td>
-                    )}
-                    {profile.role === 'superadmin' && (
-                      <td className="px-5 py-3 text-gray-600">{s.companies?.name ?? '—'}</td>
                     )}
                     <td className="px-5 py-3 text-gray-600 text-sm">{s.company_name ?? '—'}</td>
                     <td className="px-5 py-3 text-gray-600 text-sm">{s.job_type ?? '—'}</td>
