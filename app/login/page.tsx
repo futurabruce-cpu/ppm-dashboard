@@ -4,9 +4,25 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getSupabaseBrowserClient } from '@/lib/supabase/client'
 
+// Map username → email (Supabase requires email format)
+function toEmail(username: string): string {
+  const u = username.trim().toLowerCase()
+  // If already looks like an email, use as-is
+  if (u.includes('@')) return u
+  // Map known usernames
+  const map: Record<string, string> = {
+    'raef': 'raef@ppm.local',
+    'helen': 'helen@ppm.local',
+    'gareth': 'gareth@ppm.local',
+    'dan': 'dan@ppm.local',
+    'raefprivate': 'raefprivate@ppm.local',
+  }
+  return map[u] ?? `${u}@ppm.local`
+}
+
 export default function LoginPage() {
   const router = useRouter()
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -16,6 +32,7 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
     const supabase = getSupabaseBrowserClient()
+    const email = toEmail(username)
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
       setError(error.message)
@@ -46,15 +63,15 @@ export default function LoginPage() {
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
             <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
+              type="text"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
               required
               className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:border-transparent"
               style={{ '--tw-ring-color': '#F5A800' } as React.CSSProperties}
-              placeholder="you@company.com"
+              placeholder="e.g. Raef"
             />
           </div>
           <div>
