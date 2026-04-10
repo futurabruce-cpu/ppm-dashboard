@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 - site_address: site address (not billing)  
 - service_date: YYYY-MM-DD format
 - engineer_name: engineer who did the work
-- company_name: company that carried out the work (e.g. "Voca", "GOW Systems", "Ladrillos")
+- company_name: company that carried out the work — use short names only: "Voca" for any Voca/VOCA Fire company, "GOW Systems" for GOW, "Ladrillos" for Ladrillos, otherwise use the company name as-is
 - job_type: one of exactly: "PPM", "Return Visit", "Small Works", "Callout" (P1-P7/callout/emergency = Callout)
 - sheet_type: "voca" for Voca Fire, "lfl" for Ladrillos, "other" otherwise
 Use null for any field not found.`,

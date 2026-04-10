@@ -180,14 +180,7 @@ export default function ImportWorksheet() {
                     <option value="Callout">Callout</option>
                   </select>
                 </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-1">Type</label>
-                  <select name="sheet_type" defaultValue={fields.sheet_type ?? 'voca'} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
-                    <option value="lfl">Ladrillos PPM</option>
-                    <option value="voca">GOW PPM</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
+                <input type="hidden" name="sheet_type" value={fields.sheet_type ?? 'other'} />
 
                 {error && <p className="text-red-600 text-sm font-semibold">{error}</p>}
 
