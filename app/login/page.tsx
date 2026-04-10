@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import NextImage from 'next/image'
+import { GOW_LOGO_B64 } from '@/lib/gow-logo-b64'
 import { getSupabaseBrowserClient } from '@/lib/supabase/client'
 
 // Map username → email (Supabase requires email format)
@@ -50,7 +50,7 @@ export default function LoginPage() {
         <div className="mb-8 text-center">
           <div className="w-28 h-28 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{background:'#0a0a1a'}}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/gow-logo.webp" alt="GOW Systems" width={96} height={96} className="object-contain" />
+            <img src={GOW_LOGO_B64} alt="GOW Systems" width={96} height={96} className="object-contain" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Worksheets</h1>
           <p className="text-gray-500 mt-1 text-sm">Fire Alarm Service Management</p>
