@@ -1,6 +1,7 @@
 import { getSupabaseServerClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import SubmissionsTable from '@/components/SubmissionsTable'
+import ImportWorksheet from '@/components/ImportWorksheet'
 
 interface SearchParams {
   sheet_type?: string
@@ -66,7 +67,7 @@ export default async function SubmissionsPage({
           <h1 className="text-2xl font-bold text-gray-900">Completed Worksheets</h1>
           <p className="text-gray-500 text-sm mt-1">Fire alarm service sheets</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           <a
             href="https://futurabruce-cpu.github.io/lfl-ppm/"
             target="_blank"
@@ -76,6 +77,7 @@ export default async function SubmissionsPage({
           >
             + New Worksheet
           </a>
+          <ImportWorksheet />
         </div>
       </div>
       <SubmissionsTable
