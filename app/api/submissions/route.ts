@@ -64,9 +64,9 @@ export async function POST(req: NextRequest) {
     console.error('PDF generation failed:', e)
   }
 
-  // Generate job number from sequence
-  const { data: seqData } = await admin.rpc('nextval', { seq: 'job_number_seq' }).single()
-  const jobNum = seqData ? `JOB-${String(seqData).padStart(4, '0')}` : null
+  // Generate job number from count of existing submissions
+  const { count } = await admin.from('submissions').select('*', { count: 'exact', head: true })
+  const jobNum = `JOB-${String((count || 0) + 1).padStart(4, '0')}`
 
   const { data: submission, error: insertErr } = await admin
     .from('submissions')
