@@ -251,9 +251,9 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                   )}
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Company</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Job Type</th>
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Follow-up</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Sheet</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Status</th>
-                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Follow-up</th>
                   <th className="text-right px-5 py-3 font-semibold text-gray-600">Actions</th>
                 </tr>
               </thead>
@@ -274,6 +274,11 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                     <td className="px-5 py-3 text-gray-600 text-sm">{s.company_name ?? '—'}</td>
                     <td className="px-5 py-3 text-gray-600 text-sm">{s.job_type ?? '—'}</td>
                     <td className="px-5 py-3">
+                      {s.follow_up_required && (
+                        <span className="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-lg">🔴 Required</span>
+                      )}
+                    </td>
+                    <td className="px-5 py-3">
                       <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold uppercase ${
                         s.sheet_type === 'lfl' ? 'bg-amber-100 text-amber-800' : 'bg-blue-100 text-blue-800'
                       }`}>
@@ -282,11 +287,6 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                     </td>
                     <td className="px-5 py-3">
                       <StatusDropdown id={s.id} status={s.status} isAdmin={profile.role !== 'engineer'} />
-                    </td>
-                    <td className="px-5 py-3">
-                      {s.follow_up_required && (
-                        <span className="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-lg">🔴 Required</span>
-                      )}
                     </td>
                     <td className="px-5 py-3 text-right whitespace-nowrap">
                       {s.pdf_url ? (
