@@ -86,7 +86,7 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
         <input
           type="text"
           defaultValue={filters.search ?? ''}
-          onChange={e => applyFilter('search', e.target.value)}
+          onChange={e => applyFilter('search', e.target.value.trim())}
           placeholder="🔍 Search by site name..."
           className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
         />
