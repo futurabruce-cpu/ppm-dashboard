@@ -20,7 +20,7 @@ interface Props {
   submissions: Submission[]
   profile: { role: string; company_id?: string | null }
   engineers: { id: string; full_name: string | null }[]
-  filters: { sheet_type?: string; from?: string; to?: string; engineer?: string; search?: string }
+  filters: { sheet_type?: string; from?: string; to?: string; engineer?: string; search?: string; status?: string }
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -128,6 +128,24 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
           onChange={e => applyFilter('to', e.target.value)}
           className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
         />
+        <label className="flex items-center gap-2 cursor-pointer border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white select-none hover:bg-amber-50">
+          <input
+            type="checkbox"
+            checked={filters.status === 'invoiced'}
+            onChange={e => applyFilter('status', e.target.checked ? 'invoiced' : '')}
+            className="accent-amber-500 w-4 h-4"
+          />
+          <span className="font-semibold text-amber-700">Invoiced</span>
+        </label>
+        <label className="flex items-center gap-2 cursor-pointer border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white select-none hover:bg-green-50">
+          <input
+            type="checkbox"
+            checked={filters.status === 'paid'}
+            onChange={e => applyFilter('status', e.target.checked ? 'paid' : '')}
+            className="accent-green-500 w-4 h-4"
+          />
+          <span className="font-semibold text-green-700">Paid</span>
+        </label>
       </div>
 
       {submissions.length === 0 ? (

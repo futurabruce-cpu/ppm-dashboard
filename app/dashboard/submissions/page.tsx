@@ -8,6 +8,7 @@ interface SearchParams {
   to?: string
   engineer?: string
   search?: string
+  status?: string
 }
 
 export default async function SubmissionsPage({
@@ -41,6 +42,7 @@ export default async function SubmissionsPage({
   if (params.to) query = query.lte('service_date', params.to)
   if (params.engineer) query = query.eq('engineer_id', params.engineer)
   if (params.search) query = query.ilike('site_name', `%${params.search}%`)
+  if (params.status) query = query.eq('status', params.status)
 
   const { data: submissions } = await query
 
