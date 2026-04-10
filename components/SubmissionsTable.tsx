@@ -9,6 +9,7 @@ interface Submission {
   site_address: string | null
   service_date: string | null
   sheet_type: 'lfl' | 'voca'
+  status: string | null
   created_at: string
   pdf_url: string | null
   profiles?: { full_name: string | null } | null
@@ -20,6 +21,52 @@ interface Props {
   profile: { role: string; company_id?: string | null }
   engineers: { id: string; full_name: string | null }[]
   filters: { sheet_type?: string; from?: string; to?: string; engineer?: string }
+}
+
+const STATUS_LABELS: Record<string, string> = {
+  job_complete: 'Job Complete',
+  invoiced: 'Invoiced',
+  paid: 'Paid',
+}
+
+const STATUS_COLOURS: Record<string, string> = {
+  job_complete: 'bg-blue-100 text-blue-800',
+  invoiced: 'bg-amber-100 text-amber-800',
+  paid: 'bg-green-100 text-green-800',
+}
+
+function StatusDropdown({ id, status, isAdmin }: { id: string; status: string | null; isAdmin: boolean }) {
+  const router = useRouter()
+  const current = status || 'job_complete'
+
+  async function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    await fetch(`/api/submissions/${id}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: e.target.value }),
+    })
+    router.refresh()
+  }
+
+  if (!isAdmin) {
+    return (
+      <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${STATUS_COLOURS[current] ?? 'bg-gray-100 text-gray-700'}`}>
+        {STATUS_LABELS[current] ?? current}
+      </span>
+    )
+  }
+
+  return (
+    <select
+      value={current}
+      onChange={handleChange}
+      className={`text-xs font-bold rounded-lg px-2 py-1 border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400 ${STATUS_COLOURS[current] ?? 'bg-gray-100 text-gray-700'}`}
+    >
+      <option value="job_complete">Job Complete</option>
+      <option value="invoiced">Invoiced</option>
+      <option value="paid">Paid</option>
+    </select>
+  )
 }
 
 export default function SubmissionsTable({ submissions, profile, engineers, filters }: Props) {
@@ -96,11 +143,14 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                     {s.sheet_type === 'lfl' ? 'Ladrillos' : 'GOW'}
                   </span>
                 </div>
-                <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
+                <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
                   <span>📅 {s.service_date ? new Date(s.service_date).toLocaleDateString('en-GB') : '—'}</span>
                   {profile.role !== 'engineer' && s.profiles?.full_name && (
                     <span>👷 {s.profiles.full_name}</span>
                   )}
+                </div>
+                <div className="mb-3">
+                  <StatusDropdown id={s.id} status={s.status} isAdmin={profile.role !== 'engineer'} />
                 </div>
                 <div className="flex gap-2">
                   {s.pdf_url ? (
@@ -141,6 +191,7 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                     <th className="text-left px-5 py-3 font-semibold text-gray-600">Company</th>
                   )}
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Type</th>
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Status</th>
                   <th className="text-right px-5 py-3 font-semibold text-gray-600">Actions</th>
                 </tr>
               </thead>
@@ -164,6 +215,9 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                       }`}>
                         {s.sheet_type === 'lfl' ? 'Ladrillos' : 'GOW'}
                       </span>
+                    </td>
+                    <td className="px-5 py-3">
+                      <StatusDropdown id={s.id} status={s.status} isAdmin={profile.role !== 'engineer'} />
                     </td>
                     <td className="px-5 py-3 text-right whitespace-nowrap">
                       {s.pdf_url ? (
