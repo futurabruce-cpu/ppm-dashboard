@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseAdminClient } from '@/lib/supabase/admin'
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, x-api-key',
+}
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders })
+}
+
 export async function POST(req: NextRequest) {
   const apiKey = req.headers.get('x-api-key')
   if (apiKey !== process.env.SUBMISSIONS_API_KEY) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: corsHeaders })
   }
 
   const body = await req.json()
@@ -14,17 +24,17 @@ export async function POST(req: NextRequest) {
   const admin = getSupabaseAdminClient() as any
 
   const { data: { users }, error: listErr } = await admin.auth.admin.listUsers()
-  if (listErr) return NextResponse.json({ error: listErr.message }, { status: 500 })
+  if (listErr) return NextResponse.json({ error: listErr.message }, { status: 500, headers: corsHeaders })
 
   const authUser = (users as Array<{ id: string; email?: string }>).find(u => u.email === engineer_email)
-  if (!authUser) return NextResponse.json({ error: 'Engineer not found' }, { status: 404 })
+  if (!authUser) return NextResponse.json({ error: 'Engineer not found' }, { status: 404, headers: corsHeaders })
 
   const { data: profile, error: profileErr } = await admin
     .from('profiles')
     .select('id, company_id')
     .eq('id', authUser.id)
     .single()
-  if (profileErr || !profile) return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
+  if (profileErr || !profile) return NextResponse.json({ error: 'Profile not found' }, { status: 404, headers: corsHeaders })
 
   let pdf_url: string | null = null
 
@@ -55,7 +65,7 @@ export async function POST(req: NextRequest) {
     .select('id')
     .single()
 
-  if (insertErr) return NextResponse.json({ error: insertErr.message }, { status: 500 })
+  if (insertErr) return NextResponse.json({ error: insertErr.message }, { status: 500, headers: corsHeaders })
 
-  return NextResponse.json({ id: submission.id, success: true })
+  return NextResponse.json({ id: submission.id, success: true }, { headers: corsHeaders })
 }
