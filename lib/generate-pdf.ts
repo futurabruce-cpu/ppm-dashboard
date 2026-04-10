@@ -150,6 +150,27 @@ export async function generateSubmissionPDF(submission: {
     }
   }
 
+  // Signatures
+  const sigEngineer = (answers as Record<string, string>)['sig_engineer']
+  const sigCustomer = (answers as Record<string, string>)['sig_customer']
+  if (sigEngineer || sigCustomer) {
+    checkPage(50)
+    doc.setFillColor(230, 230, 230)
+    doc.rect(margin, y - 2, contentW, 7, 'F')
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold'); doc.setTextColor(55, 65, 81)
+    doc.text('SIGNATURES', margin + 2, y + 2); y += 10
+    if (sigEngineer) {
+      doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(80, 80, 80)
+      doc.text('Engineer Signature:', margin, y); y += 3
+      try { doc.addImage(sigEngineer, 'PNG', margin, y, 60, 20); y += 24 } catch(e) {}
+    }
+    if (sigCustomer) {
+      doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(80, 80, 80)
+      doc.text('Customer Signature:', margin, y); y += 3
+      try { doc.addImage(sigCustomer, 'PNG', margin, y, 60, 20); y += 24 } catch(e) {}
+    }
+  }
+
   // Page numbers
   const np = doc.internal.getNumberOfPages()
   for (let i = 1; i <= np; i++) {
@@ -157,7 +178,7 @@ export async function generateSubmissionPDF(submission: {
     doc.setFontSize(7)
     doc.setTextColor(160, 160, 160)
     doc.setFont('helvetica', 'normal')
-    doc.text(`GOW Systems | Page ${i} of ${np}`, pageW / 2, 293, { align: 'center' })
+    doc.text(`${submission.company_name || 'GOW Systems'} | Page ${i} of ${np}`, pageW / 2, 293, { align: 'center' })
   }
 
   return Buffer.from(doc.output('arraybuffer'))
