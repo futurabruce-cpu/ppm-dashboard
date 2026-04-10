@@ -87,16 +87,30 @@ export async function generateSubmissionPDF(submission: {
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(40, 40, 40)
     if (Array.isArray(val)) {
-      // Photos — just list URLs
-      val.forEach((src: unknown) => {
+      // Photos — fetch and embed
+      for (const src of val as unknown[]) {
         const str = String(src)
-        if (str.startsWith('http')) {
-          const lines = doc.splitTextToSize('📷 ' + str, contentW)
-          checkPage(lines.length * 5 + 3)
-          doc.text(lines, margin, y)
-          y += lines.length * 5 + 2
+        if (str.startsWith('data:')) {
+          checkPage(62)
+          try { doc.addImage(str, 'JPEG', margin, y, 80, 55); y += 60; }
+          catch(e) { doc.text('[Photo]', margin, y); y += 8; }
+        } else if (str.startsWith('http')) {
+          try {
+            const imgRes = await fetch(str)
+            if (imgRes.ok) {
+              const imgBuf = await imgRes.arrayBuffer()
+              const imgB64 = Buffer.from(imgBuf).toString('base64')
+              const mime = (imgRes.headers.get('content-type') || 'image/jpeg').split(';')[0]
+              checkPage(62)
+              try { doc.addImage(`data:${mime};base64,${imgB64}`, 'JPEG', margin, y, 80, 55); y += 60; }
+              catch(e) { doc.text('[Photo]', margin, y); y += 8; }
+            }
+          } catch(e) {
+            doc.setFont('helvetica', 'italic'); doc.setTextColor(150, 150, 150)
+            doc.text('[Photo unavailable]', margin, y); y += 8
+          }
         }
-      })
+      }
     } else {
       const lines = doc.splitTextToSize(String(val), contentW)
       checkPage(lines.length * 5 + 3)
