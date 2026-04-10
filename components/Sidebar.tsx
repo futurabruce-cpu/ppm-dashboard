@@ -14,7 +14,7 @@ export default function Sidebar({ profile }: { profile: Profile | null }) {
   const pathname = usePathname()
 
   const navItems = [
-    { href: '/dashboard/submissions', label: '📋 Submissions', roles: ['superadmin','admin','engineer'] },
+    { href: '/dashboard/submissions', label: '📋 Completed Worksheets', roles: ['superadmin','admin','engineer'] },
     { href: '/dashboard/engineers', label: '👷 Engineers', roles: ['superadmin','admin'] },
     { href: '/dashboard/companies', label: '🏢 Companies', roles: ['superadmin'] },
   ]
