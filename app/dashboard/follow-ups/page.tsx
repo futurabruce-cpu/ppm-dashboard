@@ -63,8 +63,8 @@ export default async function FollowUpsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50">
-                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Job No</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Date</th>
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Job No</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Site</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Engineer</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Work Needed</th>
