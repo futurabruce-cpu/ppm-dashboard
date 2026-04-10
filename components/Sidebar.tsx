@@ -25,7 +25,7 @@ export default function Sidebar({ profile }: { profile: Profile | null }) {
     <div className="w-64 flex-shrink-0 flex flex-col" style={{ background: '#1a1a2e', minHeight: '100vh' }}>
       {/* Logo */}
       <div className="px-6 py-5 border-b border-white/10">
-        <div className="text-white font-black text-xl tracking-wide">PPM Dashboard</div>
+        <div className="text-white font-black text-xl tracking-wide">Worksheets</div>
         <div className="text-white/50 text-xs mt-1">{profile?.companies?.name ?? 'Fire Alarm Services'}</div>
       </div>
 
