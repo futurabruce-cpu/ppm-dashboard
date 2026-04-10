@@ -47,7 +47,7 @@ export default async function SubmissionsPage({
     let engQuery = supabase
       .from('profiles')
       .select('id, full_name')
-      .eq('role', 'engineer')
+      .neq('role', 'superadmin')
     if (profile.role === 'admin') {
       engQuery = engQuery.eq('company_id', profile.company_id)
     }
