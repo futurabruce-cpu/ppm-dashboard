@@ -1,10 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const runtime = 'nodejs'
+
 export async function POST(req: NextRequest) {
   const { pdf_base64 } = await req.json()
   if (!pdf_base64) return NextResponse.json({ error: 'No PDF' }, { status: 400 })
 
-  // Use OpenAI to extract structured data from the PDF
+  // Extract text from PDF
+  let pdfText = ''
+  try {
+    const pdfParse = (await import('pdf-parse/lib/pdf-parse.js')).default
+    const buf = Buffer.from(pdf_base64, 'base64')
+    const parsed = await pdfParse(buf)
+    pdfText = parsed.text
+  } catch (e) {
+    console.error('PDF parse error:', e)
+    return NextResponse.json({ fields: null })
+  }
+
+  if (!pdfText.trim()) return NextResponse.json({ fields: null })
+
+  // Send text to OpenAI for structured extraction
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -16,23 +32,19 @@ export async function POST(req: NextRequest) {
       messages: [
         {
           role: 'system',
-          content: 'You are a data extraction assistant. Extract structured fields from job card PDFs. Return ONLY valid JSON with these exact keys: site_name, site_address, service_date (YYYY-MM-DD format), engineer_name, company_name (the company that carried out the work e.g. "Voca", "GOW Systems", "Ladrillos" — look for company branding/logo/header), job_type (look for a Job Type field and map it to one of these exact values: "PPM", "Return Visit", "Small Works", "Callout" — if the job type contains P1/P2/P3/P4/P5/P6/P7 or similar priority codes, or words like callout/emergency/urgent, use "Callout"; if it says return visit use "Return Visit"; if it says small works/minor works use "Small Works"; if it says PPM/service/maintenance use "PPM"), sheet_type (use "voca" for Voca Fire jobs, "lfl" for Ladrillos jobs, "other" for anything else). If a field cannot be found, use null.',
+          content: `You are a data extraction assistant. Extract structured fields from job card text. Return ONLY valid JSON with these exact keys:
+- site_name: the customer/site name (e.g. "VUE CINEMA EASTLEIGH")
+- site_address: the site address (not billing address)
+- service_date: date in YYYY-MM-DD format
+- engineer_name: the engineer/resource who did the work
+- company_name: the company that carried out the work — look for company header/branding (e.g. "Voca", "GOW Systems", "Ladrillos")
+- job_type: map to exactly one of: "PPM", "Return Visit", "Small Works", "Callout" — if job type contains P1/P2/P3/P4/P5/P6/P7 or callout/emergency use "Callout"; return visit = "Return Visit"; small/minor works = "Small Works"; PPM/service/maintenance = "PPM"
+- sheet_type: "voca" for Voca Fire jobs, "lfl" for Ladrillos jobs, "other" for anything else
+If a field cannot be found, use null.`,
         },
         {
           role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: 'Extract the fields from this job card PDF.',
-            },
-            {
-              type: 'image_url',
-              image_url: {
-                url: `data:application/pdf;base64,${pdf_base64}`,
-                detail: 'high',
-              },
-            },
-          ],
+          content: `Extract fields from this job card:\n\n${pdfText.slice(0, 4000)}`,
         },
       ],
       max_tokens: 500,
@@ -40,8 +52,8 @@ export async function POST(req: NextRequest) {
   })
 
   if (!res.ok) {
-    // Fallback: try text extraction approach
-    return NextResponse.json({ error: 'Parse failed', fields: null }, { status: 200 })
+    console.error('OpenAI error:', await res.text())
+    return NextResponse.json({ fields: null })
   }
 
   const data = await res.json()
