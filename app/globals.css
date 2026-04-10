@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+:root {
+  --sidebar-bg: #1a1a2e;
+  --accent: #F5A800;
+}

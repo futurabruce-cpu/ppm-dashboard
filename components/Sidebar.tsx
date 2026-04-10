@@ -1,0 +1,70 @@
+'use client'
+
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import { logout } from '@/app/actions/auth'
+
+interface Profile {
+  role: 'superadmin' | 'admin' | 'engineer'
+  full_name?: string | null
+  companies?: { name: string } | null
+}
+
+export default function Sidebar({ profile }: { profile: Profile | null }) {
+  const pathname = usePathname()
+
+  const navItems = [
+    { href: '/dashboard/submissions', label: '📋 Submissions', roles: ['superadmin','admin','engineer'] },
+    { href: '/dashboard/engineers', label: '👷 Engineers', roles: ['superadmin','admin'] },
+    { href: '/dashboard/companies', label: '🏢 Companies', roles: ['superadmin'] },
+  ]
+
+  const role = profile?.role ?? 'engineer'
+
+  return (
+    <div className="w-64 flex-shrink-0 flex flex-col" style={{ background: '#1a1a2e', minHeight: '100vh' }}>
+      {/* Logo */}
+      <div className="px-6 py-5 border-b border-white/10">
+        <div className="text-white font-black text-xl tracking-wide">PPM Dashboard</div>
+        <div className="text-white/50 text-xs mt-1">{profile?.companies?.name ?? 'Fire Alarm Services'}</div>
+      </div>
+
+      {/* Nav */}
+      <nav className="flex-1 px-3 py-4 space-y-1">
+        {navItems
+          .filter(item => item.roles.includes(role))
+          .map(item => {
+            const active = pathname.startsWith(item.href)
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center px-4 py-3 rounded-lg text-sm font-semibold transition-all ${
+                  active
+                    ? 'text-black'
+                    : 'text-white/70 hover:text-white hover:bg-white/10'
+                }`}
+                style={active ? { background: '#F5A800', color: '#000' } : {}}
+              >
+                {item.label}
+              </Link>
+            )
+          })}
+      </nav>
+
+      {/* User + logout */}
+      <div className="px-4 py-4 border-t border-white/10">
+        <div className="text-white/60 text-xs mb-1">{profile?.full_name ?? 'User'}</div>
+        <div className="text-white/30 text-xs mb-3 capitalize">{role}</div>
+        <form action={logout}>
+          <button
+            type="submit"
+            className="w-full text-left text-white/50 hover:text-white text-xs py-1 transition-colors"
+          >
+            → Sign out
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
