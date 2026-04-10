@@ -252,7 +252,7 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Company</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Job Type</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Follow-up</th>
-                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Type</th>
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Sheet</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Status</th>
                   <th className="text-right px-5 py-3 font-semibold text-gray-600">Actions</th>
                 </tr>
