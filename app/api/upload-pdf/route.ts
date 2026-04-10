@@ -12,7 +12,7 @@ export async function OPTIONS() {
 }
 
 export async function POST(req: NextRequest) {
-  const apiKey = req.headers.get('x-api-key')
+  const apiKey = req.headers.get('x-api-key') || req.nextUrl.searchParams.get('key')
   const validKey = process.env.SUBMISSIONS_API_KEY || 'ppm_live_2026_secure_key'
   if (apiKey !== validKey) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: corsHeaders })
