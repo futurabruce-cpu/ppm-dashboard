@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json()
-  const { sheet_type, engineer_email, site_name, site_address, service_date, answers, pdf_base64 } = body
+  const { sheet_type, engineer_email, site_name, site_address, service_date, answers, pdf_base64, job_type, company_name } = body
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const admin = getSupabaseAdminClient() as any
@@ -62,6 +62,8 @@ export async function POST(req: NextRequest) {
       service_date,
       answers,
       pdf_url,
+      job_type: job_type || null,
+      company_name: company_name || null,
     })
     .select('id')
     .single()
