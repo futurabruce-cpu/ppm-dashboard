@@ -55,8 +55,13 @@ export async function POST(req: NextRequest) {
   const { data: publicData } = admin.storage.from('pdfs').getPublicUrl(filename)
   const pdf_url = publicData.publicUrl
 
+  // Support both submissions and follow_ups tables
+  const table = req.nextUrl.searchParams.get('table') || 'submissions'
+  const validTables = ['submissions', 'follow_ups']
+  const targetTable = validTables.includes(table) ? table : 'submissions'
+
   const { error: updateErr } = await admin
-    .from('submissions')
+    .from(targetTable)
     .update({ pdf_url })
     .eq('id', id)
 
