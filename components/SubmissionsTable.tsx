@@ -11,6 +11,7 @@ interface Submission {
   sheet_type: 'lfl' | 'voca'
   status: string | null
   company_name: string | null
+  job_type: string | null
   created_at: string
   pdf_url: string | null
   profiles?: { full_name: string | null } | null
@@ -183,6 +184,7 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                       {s.sheet_type === 'lfl' ? 'Ladrillos' : 'GOW'}
                     </span>
                     {s.company_name && <span className="text-xs font-semibold text-gray-500">{s.company_name}</span>}
+                    {s.job_type && <span className="text-xs text-gray-400">{s.job_type}</span>}
                   </div>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
@@ -233,6 +235,7 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                     <th className="text-left px-5 py-3 font-semibold text-gray-600">Company</th>
                   )}
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Company</th>
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Job Type</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Type</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Status</th>
                   <th className="text-right px-5 py-3 font-semibold text-gray-600">Actions</th>
@@ -260,6 +263,7 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                       </span>
                     </td>
                     <td className="px-5 py-3 text-gray-600 text-sm">{s.company_name ?? '—'}</td>
+                    <td className="px-5 py-3 text-gray-600 text-sm">{s.job_type ?? '—'}</td>
                     <td className="px-5 py-3">
                       <StatusDropdown id={s.id} status={s.status} isAdmin={profile.role !== 'engineer'} />
                     </td>

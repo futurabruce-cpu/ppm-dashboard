@@ -9,6 +9,7 @@ interface ParsedFields {
   service_date: string | null
   engineer_name: string | null
   company_name: string | null
+  job_type: string | null
   sheet_type: string | null
 }
 
@@ -46,10 +47,10 @@ export default function ImportWorksheet() {
       if (data.fields) {
         setFields(data.fields)
       } else {
-        setFields({ site_name: '', site_address: '', service_date: new Date().toISOString().split('T')[0], engineer_name: '', company_name: '', sheet_type: 'voca' })
+        setFields({ site_name: '', site_address: '', service_date: new Date().toISOString().split('T')[0], engineer_name: '', company_name: '', job_type: '', sheet_type: 'voca' })
       }
     } catch {
-      setFields({ site_name: '', site_address: '', service_date: new Date().toISOString().split('T')[0], engineer_name: '', company_name: '', sheet_type: 'voca' })
+      setFields({ site_name: '', site_address: '', service_date: new Date().toISOString().split('T')[0], engineer_name: '', company_name: '', job_type: '', sheet_type: 'voca' })
     } finally {
       setParsing(false)
     }
@@ -75,6 +76,7 @@ export default function ImportWorksheet() {
           sheet_type: data.get('sheet_type'),
           engineer_name: data.get('engineer_name'),
           company_name: data.get('company_name'),
+          job_type: data.get('job_type'),
           pdf_base64: pdfBase64,
         }),
       })
@@ -168,6 +170,10 @@ export default function ImportWorksheet() {
                     <option value="Voca">Voca</option>
                     <option value="Other">Other</option>
                   </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-1">Job Type</label>
+                  <input name="job_type" type="text" defaultValue={fields.job_type ?? ''} placeholder="e.g. Return Visit, Service, New Install" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-1">Type</label>
