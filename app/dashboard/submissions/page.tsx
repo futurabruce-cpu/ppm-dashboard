@@ -57,7 +57,7 @@ export default async function SubmissionsPage({
 
   return (
     <div className="p-6">
-      <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Completed Worksheets</h1>
           <p className="text-gray-500 text-sm mt-1">Fire alarm service sheets</p>
