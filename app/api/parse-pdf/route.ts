@@ -9,7 +9,8 @@ export async function POST(req: NextRequest) {
   // Extract text from PDF
   let pdfText = ''
   try {
-    const pdfParse = (await import('pdf-parse/lib/pdf-parse.js')).default
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const pdfParse = require('pdf-parse')
     const buf = Buffer.from(pdf_base64, 'base64')
     const parsed = await pdfParse(buf)
     pdfText = parsed.text
