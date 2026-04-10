@@ -62,7 +62,7 @@ export async function generateSubmissionPDF(submission: {
   y += 4
 
   // Label maps for known question IDs
-  const QUESTION_LABELS: Record<string, string> = {
+  const QUESTION_LABELS: Record<string, string | null> = {
     // Callout questions
     c1: 'Work Carried Out', c2: 'Picture', c3: 'Equipment Used', c4: 'Number of Engineers',
     c6: 'System Current Status', c8t: 'Time on Site', c7: 'Return Visit Required',
