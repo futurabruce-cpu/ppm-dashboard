@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       messages: [
         {
           role: 'system',
-          content: 'You are a data extraction assistant. Extract structured fields from job card PDFs. Return ONLY valid JSON with these exact keys: site_name, site_address, service_date (YYYY-MM-DD format), engineer_name, company_name (the company that carried out the work e.g. "Voca", "GOW Systems", "Ladrillos" — look for company branding/logo/header), job_type (e.g. "Return Visit", "New Install", "Service", "Maintenance" — look for a Job Type field), sheet_type (use "voca" for Voca Fire jobs, "lfl" for Ladrillos jobs, "other" for anything else). If a field cannot be found, use null.',
+          content: 'You are a data extraction assistant. Extract structured fields from job card PDFs. Return ONLY valid JSON with these exact keys: site_name, site_address, service_date (YYYY-MM-DD format), engineer_name, company_name (the company that carried out the work e.g. "Voca", "GOW Systems", "Ladrillos" — look for company branding/logo/header), job_type (look for a Job Type field and map it to one of these exact values: "PPM", "Return Visit", "Small Works", "Callout" — if the job type contains P1/P2/P3/P4/P5/P6/P7 or similar priority codes, or words like callout/emergency/urgent, use "Callout"; if it says return visit use "Return Visit"; if it says small works/minor works use "Small Works"; if it says PPM/service/maintenance use "PPM"), sheet_type (use "voca" for Voca Fire jobs, "lfl" for Ladrillos jobs, "other" for anything else). If a field cannot be found, use null.',
         },
         {
           role: 'user',

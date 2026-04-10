@@ -22,7 +22,7 @@ interface Props {
   submissions: Submission[]
   profile: { role: string; company_id?: string | null }
   engineers: { id: string; full_name: string | null }[]
-  filters: { sheet_type?: string; from?: string; to?: string; engineer?: string; search?: string; status?: string; company_name?: string }
+  filters: { sheet_type?: string; from?: string; to?: string; engineer?: string; search?: string; status?: string; company_name?: string; job_type?: string }
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -106,13 +106,15 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
           <option value="Voca">Voca</option>
         </select>
         <select
-          defaultValue={filters.sheet_type ?? ''}
-          onChange={e => applyFilter('sheet_type', e.target.value)}
+          defaultValue={filters.job_type ?? ''}
+          onChange={e => applyFilter('job_type', e.target.value)}
           className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
         >
-          <option value="">All Types</option>
-          <option value="lfl">Ladrillos</option>
-          <option value="voca">GOW</option>
+          <option value="">All Job Types</option>
+          <option value="PPM">PPM</option>
+          <option value="Return Visit">Return Visit</option>
+          <option value="Small Works">Small Works</option>
+          <option value="Callout">Callout</option>
         </select>
 
         {profile.role !== 'engineer' && engineers.length > 0 && (

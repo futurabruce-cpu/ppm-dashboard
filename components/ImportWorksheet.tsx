@@ -173,7 +173,12 @@ export default function ImportWorksheet() {
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-1">Job Type</label>
-                  <input name="job_type" type="text" defaultValue={fields.job_type ?? ''} placeholder="e.g. Return Visit, Service, New Install" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400" />
+                  <select name="job_type" defaultValue={fields.job_type ?? 'PPM'} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400">
+                    <option value="PPM">PPM</option>
+                    <option value="Return Visit">Return Visit</option>
+                    <option value="Small Works">Small Works</option>
+                    <option value="Callout">Callout</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-1">Type</label>
