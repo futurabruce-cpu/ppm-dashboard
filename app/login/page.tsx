@@ -51,7 +51,7 @@ export default function LoginPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={GOW_LOGO_B64} alt="GOW Systems" width={144} height={144} className="object-contain mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900">Worksheets</h1>
-          <p className="text-gray-500 mt-1 text-sm">Fire Alarm Service Management</p>
+          <p className="text-gray-500 mt-1 text-sm">Alarm Service Management</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
