@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   const { data: profile } = await supabase.from('profiles').select('id, company_id, role').eq('id', user.id).single()
   if (!profile || profile.role === 'engineer') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const { site_name, site_address, service_date, sheet_type, engineer_name, company_name, job_type, pdf_base64 } = await req.json()
+  const { site_name, site_address, service_date, sheet_type, engineer_name, company_name, job_type, follow_up_required, pdf_base64 } = await req.json()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const admin = getSupabaseAdminClient() as any
@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
     answers: engineer_name ? { engineer_name } : {},
     company_name: company_name || null,
     job_type: job_type || null,
+    follow_up_required: follow_up_required || false,
     pdf_url,
     status: 'job_complete',
   }).select('id').single()

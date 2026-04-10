@@ -10,6 +10,7 @@ interface ParsedFields {
   engineer_name: string | null
   company_name: string | null
   job_type: string | null
+  follow_up_required: boolean | null
   sheet_type: string | null
 }
 
@@ -77,6 +78,7 @@ export default function ImportWorksheet() {
           engineer_name: data.get('engineer_name'),
           company_name: data.get('company_name'),
           job_type: data.get('job_type'),
+          follow_up_required: fields?.follow_up_required || false,
           pdf_base64: pdfBase64,
         }),
       })
