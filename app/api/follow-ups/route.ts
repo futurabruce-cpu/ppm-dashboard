@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: corsHeaders })
   }
 
-  const { engineer_email, site_name, site_address, service_date, job_type, company_name, answers } = await req.json()
+  const { engineer_email, site_name, site_address, service_date, job_type, company_name, answers, job_number } = await req.json()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const admin = getSupabaseAdminClient() as any
@@ -64,6 +64,7 @@ export async function POST(req: NextRequest) {
     company_name,
     answers,
     pdf_url,
+    job_number: job_number || null,
     status: 'pending',
   }).select('id').single()
 

@@ -39,6 +39,7 @@ export default async function FollowUpsPage() {
               <div key={f.id} className="bg-white rounded-xl shadow-sm border-2 border-red-200 p-4">
                 <div className="flex items-start justify-between mb-2">
                   <div>
+                    {f.job_number && <div className="font-mono text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded mb-1 inline-block">{f.job_number}</div>}
                     <div className="font-bold text-gray-900 text-base">{f.site_name ?? '—'}</div>
                     {f.site_address && <div className="text-gray-500 text-xs mt-0.5">{f.site_address}</div>}
                   </div>
@@ -62,6 +63,7 @@ export default async function FollowUpsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50">
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Job No</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Date</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Site</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Engineer</th>
@@ -77,6 +79,7 @@ export default async function FollowUpsPage() {
                 {followUps.map((f: any) => (
                   <tr key={f.id} className="border-b border-gray-50 hover:bg-red-50/30">
                     <td className="px-5 py-3 text-gray-700 whitespace-nowrap">{f.service_date ? new Date(f.service_date).toLocaleDateString('en-GB') : '—'}</td>
+                    <td className="px-5 py-3">{f.job_number ? <span className="font-mono text-xs font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded-lg">{f.job_number}</span> : '—'}</td>
                     <td className="px-5 py-3 font-semibold text-gray-900">{f.site_name ?? '—'}</td>
                     <td className="px-5 py-3 text-gray-600">{f.profiles?.full_name ?? '—'}</td>
                     <td className="px-5 py-3 text-gray-700 max-w-[200px] truncate">{f.answers?.cf1 ?? '—'}</td>

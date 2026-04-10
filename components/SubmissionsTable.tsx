@@ -15,6 +15,7 @@ interface Submission {
   follow_up_required: boolean | null
   created_at: string
   pdf_url: string | null
+  job_number: string | null
   profiles?: { full_name: string | null } | null
   companies?: { name: string } | null
 }
@@ -23,7 +24,7 @@ interface Props {
   submissions: Submission[]
   profile: { role: string; company_id?: string | null }
   engineers: { id: string; full_name: string | null }[]
-  filters: { sheet_type?: string; from?: string; to?: string; engineer?: string; search?: string; status?: string; company_name?: string; job_type?: string; follow_up?: string }
+  filters: { sheet_type?: string; from?: string; to?: string; engineer?: string; search?: string; status?: string; company_name?: string; job_type?: string; follow_up?: string; job_number?: string }
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -85,13 +86,20 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
   return (
     <div>
       {/* Search */}
-      <div className="mb-4">
+      <div className="mb-4 flex gap-2">
         <input
           type="text"
           defaultValue={filters.search ?? ''}
           onChange={e => applyFilter('search', e.target.value.trim())}
           placeholder="🔍 Search by site name..."
-          className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+          className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+        />
+        <input
+          type="text"
+          defaultValue={filters.job_number ?? ''}
+          onChange={e => applyFilter('job_number', e.target.value.trim())}
+          placeholder="🔢 Job No..."
+          className="w-36 border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
         />
       </div>
       {/* Filters */}
@@ -186,6 +194,7 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
               <div key={s.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
                 <div className="flex items-start justify-between mb-2">
                   <div>
+                    {s.job_number && <div className="font-mono text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded mb-1 inline-block">{s.job_number}</div>}
                     <div className="font-bold text-gray-900 text-base">{s.site_name ?? '—'}</div>
                     {s.site_address && <div className="text-gray-500 text-xs mt-0.5">{s.site_address}</div>}
                   </div>
@@ -249,6 +258,7 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                   {profile.role === 'superadmin' && (
                     <th className="text-left px-5 py-3 font-semibold text-gray-600">Company</th>
                   )}
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Job No</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Company</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Job Type</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Follow-up</th>
@@ -262,6 +272,11 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                   <tr key={s.id} className={`border-b border-gray-50 hover:bg-amber-50/40 transition-colors ${i % 2 === 0 ? '' : 'bg-gray-50/30'}`}>
                     <td className="px-5 py-3 text-gray-700 whitespace-nowrap">
                       {s.service_date ? new Date(s.service_date).toLocaleDateString('en-GB') : '—'}
+                    </td>
+                    <td className="px-5 py-3">
+                      {s.job_number
+                        ? <span className="font-mono text-xs font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded-lg">{s.job_number}</span>
+                        : <span className="text-gray-400">—</span>}
                     </td>
                     <td className="px-5 py-3 font-semibold text-gray-900">{s.site_name ?? '—'}</td>
                     <td className="px-5 py-3 text-gray-500 max-w-[200px] truncate">{s.site_address ?? '—'}</td>

@@ -64,6 +64,10 @@ export async function POST(req: NextRequest) {
     console.error('PDF generation failed:', e)
   }
 
+  // Generate job number from sequence
+  const { data: seqData } = await admin.rpc('nextval', { seq: 'job_number_seq' }).single()
+  const jobNum = seqData ? `JOB-${String(seqData).padStart(4, '0')}` : null
+
   const { data: submission, error: insertErr } = await admin
     .from('submissions')
     .insert({
@@ -78,11 +82,12 @@ export async function POST(req: NextRequest) {
       job_type: job_type || null,
       company_name: company_name || null,
       follow_up_required: follow_up_required || false,
+      job_number: jobNum,
     })
-    .select('id')
+    .select('id, job_number')
     .single()
 
   if (insertErr) return NextResponse.json({ error: insertErr.message }, { status: 500, headers: corsHeaders })
 
-  return NextResponse.json({ id: submission.id, success: true }, { headers: corsHeaders })
+  return NextResponse.json({ id: submission.id, job_number: submission.job_number, success: true }, { headers: corsHeaders })
 }
