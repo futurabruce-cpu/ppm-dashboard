@@ -12,6 +12,7 @@ interface Submission {
   status: string | null
   company_name: string | null
   job_type: string | null
+  follow_up_required: boolean | null
   created_at: string
   pdf_url: string | null
   profiles?: { full_name: string | null } | null
@@ -22,7 +23,7 @@ interface Props {
   submissions: Submission[]
   profile: { role: string; company_id?: string | null }
   engineers: { id: string; full_name: string | null }[]
-  filters: { sheet_type?: string; from?: string; to?: string; engineer?: string; search?: string; status?: string; company_name?: string; job_type?: string }
+  filters: { sheet_type?: string; from?: string; to?: string; engineer?: string; search?: string; status?: string; company_name?: string; job_type?: string; follow_up?: string }
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -142,6 +143,15 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
           onChange={e => applyFilter('to', e.target.value)}
           className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
         />
+        <label className="flex items-center gap-2 cursor-pointer border border-red-200 rounded-lg px-3 py-2 text-sm bg-white select-none hover:bg-red-50">
+          <input
+            type="checkbox"
+            checked={filters.follow_up === 'true'}
+            onChange={e => applyFilter('follow_up', e.target.checked ? 'true' : '')}
+            className="accent-red-500 w-4 h-4"
+          />
+          <span className="font-semibold text-red-700">Follow-ups</span>
+        </label>
         <label className="flex items-center gap-2 cursor-pointer border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white select-none hover:bg-amber-50">
           <input
             type="checkbox"
@@ -189,10 +199,13 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                     {s.job_type && <span className="text-xs text-gray-400">{s.job_type}</span>}
                   </div>
                 </div>
-                <div className="flex items-center gap-3 text-xs text-gray-500 mb-2">
+                <div className="flex items-center gap-3 text-xs text-gray-500 mb-2 flex-wrap">
                   <span>📅 {s.service_date ? new Date(s.service_date).toLocaleDateString('en-GB') : '—'}</span>
                   {profile.role !== 'engineer' && s.profiles?.full_name && (
                     <span>👷 {s.profiles.full_name}</span>
+                  )}
+                  {s.follow_up_required && (
+                    <span className="bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-lg">🔴 Follow-up Required</span>
                   )}
                 </div>
                 <div className="mb-3">
@@ -238,6 +251,7 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                   )}
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Company</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Job Type</th>
+                  <th className="text-left px-5 py-3 font-semibold text-gray-600">Follow-up</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Type</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Status</th>
                   <th className="text-right px-5 py-3 font-semibold text-gray-600">Actions</th>
@@ -266,6 +280,11 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
                     </td>
                     <td className="px-5 py-3 text-gray-600 text-sm">{s.company_name ?? '—'}</td>
                     <td className="px-5 py-3 text-gray-600 text-sm">{s.job_type ?? '—'}</td>
+                    <td className="px-5 py-3">
+                      {s.follow_up_required && (
+                        <span className="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-lg">🔴 Required</span>
+                      )}
+                    </td>
                     <td className="px-5 py-3">
                       <StatusDropdown id={s.id} status={s.status} isAdmin={profile.role !== 'engineer'} />
                     </td>

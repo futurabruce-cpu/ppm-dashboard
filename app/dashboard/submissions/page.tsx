@@ -12,6 +12,7 @@ interface SearchParams {
   status?: string
   company_name?: string
   job_type?: string
+  follow_up?: string
 }
 
 export default async function SubmissionsPage({
@@ -48,6 +49,7 @@ export default async function SubmissionsPage({
   if (params.status) query = query.eq('status', params.status)
   if (params.company_name) query = query.ilike('company_name', `%${params.company_name}%`)
   if (params.job_type) query = query.eq('job_type', params.job_type)
+  if (params.follow_up === 'true') query = query.eq('follow_up_required', true)
 
   const { data: submissions } = await query
 
