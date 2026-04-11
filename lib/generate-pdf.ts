@@ -82,6 +82,8 @@ export async function generateSubmissionPDF(submission: {
     34: 'PAVA Batteries', 35: 'PAVA Signalling', 36: 'Photo – PAVA Batteries',
     37: 'Photo – Fire Panel', 38: 'Panel Clean', 39: 'Defects Identified',
     40: 'Outstanding Defects', 41: 'Comments', 42: 'Next Service',
+    // Battery calculation (question 18 in lfl-ppm)
+    18: 'Battery Calculation',
     // Follow-up (excluded from main callout PDF)
     cf1: null, cf2: null, cf3: null,
     customer_name: 'Customer Name',
@@ -143,7 +145,31 @@ export async function generateSubmissionPDF(submission: {
         }
       }
     } else {
-      const lines = doc.splitTextToSize(String(val), contentW)
+      // Format battery calc JSON object nicely
+      let displayVal: string
+      if (typeof val === 'object' && val !== null && !Array.isArray(val)) {
+        const bc = val as Record<string, unknown>
+        if ('I1' in bc && 'T1' in bc && 'I2' in bc && 'Cmin' in bc) {
+          displayVal = `I1 = ${bc.I1}A  |  T1 = ${bc.T1}h  |  I2 = ${bc.I2}A  →  Cmin = ${bc.Cmin} Ah`
+        } else {
+          displayVal = JSON.stringify(bc)
+        }
+      } else if (typeof val === 'string') {
+        // Try parsing JSON strings that may contain battery calc data
+        try {
+          const parsed = JSON.parse(val)
+          if (parsed && typeof parsed === 'object' && 'I1' in parsed) {
+            displayVal = `I1 = ${parsed.I1}A  |  T1 = ${parsed.T1}h  |  I2 = ${parsed.I2}A  →  Cmin = ${parsed.Cmin} Ah`
+          } else {
+            displayVal = val
+          }
+        } catch {
+          displayVal = val
+        }
+      } else {
+        displayVal = String(val)
+      }
+      const lines = doc.splitTextToSize(displayVal, contentW)
       checkPage(lines.length * 5 + 3)
       doc.text(lines, margin, y)
       y += lines.length * 5 + 4
