@@ -1,0 +1,27 @@
+<script>
+function showPicker() {
+  document.getElementById('scheduled-screen').style.display = 'none';
+  // Logic to show picker
+}
+
+function showScheduledJobs() {
+  document.getElementById('scheduled-screen').style.display = 'flex';
+  // Logic to load jobs
+}
+
+function loadScheduledJobs() {
+  fetch('${DASHBOARD_URL}/api/scheduled-jobs?status=pending')
+    .then(response => response.json())
+    .then(data => {
+      // Logic to render job cards
+    });
+}
+
+function escHtmlSched(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function startScheduledJob(jobId, appType, jobType, siteName, siteAddress, companyName) {
+  // Logic to route to correct app
+}
+</script>

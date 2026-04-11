@@ -15,6 +15,7 @@ export default function Sidebar({ profile }: { profile: Profile | null }) {
 
   const navItems = [
     { href: '/dashboard/submissions', label: '📋 Worksheets', roles: ['superadmin','admin','engineer'] },
+    { href: '/dashboard/scheduled-jobs', label: '📅 Scheduled Jobs', roles: ['superadmin','admin'] },
     { href: '/dashboard/follow-ups', label: '🔴 Follow Ups', roles: ['superadmin','admin','engineer'] },
     { href: '/dashboard/engineers', label: '👷 Engineers', roles: ['superadmin','admin'] },
     { href: '/dashboard/companies', label: '🏢 Companies', roles: ['superadmin'] },
