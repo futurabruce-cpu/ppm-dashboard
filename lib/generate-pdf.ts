@@ -73,7 +73,7 @@ export async function generateSubmissionPDF(submission: {
     7: 'New Partitions', 8: 'Storage Clearance', 9: 'Detector Clearance',
     10: 'Occupancy Changes', 11: 'Cable Condition', 12: 'False Alarm Records',
     13: 'Battery Condition', 14: 'Battery Voltage', 15: 'Charge Voltage',
-    16: 'Battery Load Test', 17: 'Batteries >4 Years', 18: 'Call Point Switches',
+    16: 'Battery Load Test', 17: 'Batteries >4 Years', 18: 'Battery Calculation',
     19: 'Areas / Zones Tested', 20: 'Detectors Tested', 21: 'Call Points Tested',
     22: 'ARC Signalling', 23: 'Remote Signalling', 24: 'Fire Brigade Link',
     25: 'Sounders / Visual', 26: 'Beam Detectors', 27: 'Aspirating Systems',
@@ -82,8 +82,6 @@ export async function generateSubmissionPDF(submission: {
     34: 'PAVA Batteries', 35: 'PAVA Signalling', 36: 'Photo – PAVA Batteries',
     37: 'Photo – Fire Panel', 38: 'Panel Clean', 39: 'Defects Identified',
     40: 'Outstanding Defects', 41: 'Comments', 42: 'Next Service',
-    // Battery calculation (question 18 in lfl-ppm)
-    18: 'Battery Calculation',
     // Follow-up (excluded from main callout PDF)
     cf1: null, cf2: null, cf3: null,
     customer_name: 'Customer Name',
