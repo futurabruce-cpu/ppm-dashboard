@@ -7,7 +7,7 @@ export default async function ScheduledJobsPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [jobsRes, engineersRes] = await Promise.all([
     (supabase as any).from('scheduled_jobs').select('*').order('scheduled_date', { ascending: true }),
-    supabase.from('profiles').select('id, full_name').eq('role', 'engineer').order('full_name'),
+    supabase.from('profiles').select('id, full_name, role').order('full_name'),
   ])
 
   return (
