@@ -244,6 +244,7 @@ export default function ScheduledJobsClient({ jobs, engineers }: Props) {
                 >
                   <option>PPM</option>
                   <option>Callout</option>
+                  <option>Small Works</option>
                 </select>
               </div>
 
