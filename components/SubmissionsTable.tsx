@@ -113,6 +113,7 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
           <option value="GOW Systems">GOW Systems</option>
           <option value="Ladrillos">Ladrillos</option>
           <option value="Voca">Voca</option>
+          <option value="MS Webb">MS Webb</option>
         </select>
         <select
           defaultValue={filters.job_type ?? ''}
