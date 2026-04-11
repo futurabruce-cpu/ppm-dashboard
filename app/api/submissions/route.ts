@@ -40,8 +40,9 @@ export async function POST(req: NextRequest) {
 
   let pdf_url: string | null = null
 
-  // Generate PDF server-side immediately — no upload needed from device
-  try {
+  // For lfl (Ladrillos) sheets, the device generates and uploads the authoritative PDF
+  // so skip server-side generation — it will be set via /api/upload-pdf
+  if (sheet_type !== 'lfl') try {
     const pdfBuf = await generateSubmissionPDF({
       sheet_type,
       site_name,
