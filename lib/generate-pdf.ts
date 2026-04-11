@@ -108,12 +108,26 @@ export async function generateSubmissionPDF(submission: {
     if (y + needed > 280) { doc.addPage(); y = 14 }
   }
 
-  for (const [key, val] of Object.entries(answers)) {
-    if (!val || key.startsWith('sig_')) continue
-    // Skip follow-up answers from main PDF
-    if (key.startsWith('cf')) continue
-    // Skip if explicitly null in label map
+  // Build merged key list: all known labels first (in order), then any extra answer keys
+  const _isCalloutSheet = submission.job_type === 'Callout' || submission.job_type === 'Small Works'
+  const calloutKeys = ['c1','c2','c3','c4','c6','c8t','c7','c8','c9']
+  const ppmKeys = Object.keys(QUESTION_LABELS).filter(k =>
+    !k.startsWith('c') && !k.startsWith('cf') && QUESTION_LABELS[k] !== null
+  ).sort((a, b) => Number(a) - Number(b))
+  const orderedKeys = _isCalloutSheet ? calloutKeys : ppmKeys
+  // Add any answer keys not in our label map (exclude sigs, cf, and already-listed)
+  const extraKeys = Object.keys(answers).filter(k =>
+    !k.startsWith('sig_') && !k.startsWith('cf') &&
+    !orderedKeys.includes(k) &&
+    !(k in QUESTION_LABELS && QUESTION_LABELS[k] === null)
+  )
+  const allKeys = [...orderedKeys, ...extraKeys]
+
+  for (const key of allKeys) {
+    // Skip signature fields and follow-up fields
+    if (key.startsWith('sig_') || key.startsWith('cf')) continue
     if (key in QUESTION_LABELS && QUESTION_LABELS[key] === null) continue
+    const val = answers[key]
     const label = QUESTION_LABELS[key] || key
     checkPage(14)
     doc.setFontSize(9)
@@ -123,7 +137,7 @@ export async function generateSubmissionPDF(submission: {
     y += 5
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(40, 40, 40)
-    if (Array.isArray(val)) {
+    if (Array.isArray(val) && val.length > 0) {
       // Photos — fetch and embed
       for (const src of val as unknown[]) {
         const str = String(src)
@@ -170,6 +184,8 @@ export async function generateSubmissionPDF(submission: {
         } catch {
           displayVal = val
         }
+      } else if (val === undefined || val === null || val === '') {
+        displayVal = '—'
       } else {
         displayVal = String(val)
       }
