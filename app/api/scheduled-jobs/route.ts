@@ -29,8 +29,18 @@ export async function POST(req: NextRequest) {
   }
   const body = await req.json()
   const supabase = getSupabaseAdminClient()
+
+  // Auto-generate our job number (SCHED-0001 sequence)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = await (supabase as any).from('scheduled_jobs').insert(body).select().single()
+  const { count } = await (supabase as any).from('scheduled_jobs').select('*', { count: 'exact', head: true })
+  const ourJobNumber = `SCHED-${String((count || 0) + 1).padStart(4, '0')}`
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase as any)
+    .from('scheduled_jobs')
+    .insert({ ...body, our_job_number: ourJobNumber })
+    .select()
+    .single()
   if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 500, headers: corsHeaders })
   return NextResponse.json({ ok: true, job: data }, { headers: corsHeaders })
 }

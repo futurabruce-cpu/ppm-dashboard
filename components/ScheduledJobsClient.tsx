@@ -15,6 +15,8 @@ interface Job {
   notes: string | null
   status: string
   submission_id: string | null
+  our_job_number: string | null
+  customer_job_number: string | null
   created_at: string
 }
 
@@ -52,6 +54,7 @@ export default function ScheduledJobsClient({ jobs, engineers }: Props) {
     job_type: 'PPM',
     app_type: 'gow',
     scheduled_date: '',
+    customer_job_number: '',
     notes: '',
   })
 
@@ -96,7 +99,7 @@ export default function ScheduledJobsClient({ jobs, engineers }: Props) {
         body: JSON.stringify(form),
       })
       setShowModal(false)
-      setForm({ engineer_id: '', engineer_name: '', site_name: '', site_address: '', company_name: 'GOW Systems', job_type: 'PPM', app_type: 'gow', scheduled_date: '', notes: '' })
+      setForm({ engineer_id: '', engineer_name: '', site_name: '', site_address: '', company_name: 'GOW Systems', job_type: 'PPM', app_type: 'gow', scheduled_date: '', customer_job_number: '', notes: '' })
       setSiteQuery('')
       router.refresh()
     } catch { /* ignore */ }
@@ -146,6 +149,14 @@ export default function ScheduledJobsClient({ jobs, engineers }: Props) {
             <div key={job.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
               <div className="flex items-start justify-between mb-2">
                 <div>
+                  <div className="flex flex-wrap gap-2 mb-1">
+                    {job.our_job_number && (
+                      <span className="font-mono text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">{job.our_job_number}</span>
+                    )}
+                    {job.customer_job_number && (
+                      <span className="font-mono text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Cust: {job.customer_job_number}</span>
+                    )}
+                  </div>
                   <div className="font-black text-gray-900 text-lg">{job.site_name || '—'}</div>
                   {job.site_address && <div className="text-gray-500 text-sm mt-0.5">{job.site_address}</div>}
                 </div>
@@ -273,6 +284,18 @@ export default function ScheduledJobsClient({ jobs, engineers }: Props) {
                   rows={2}
                   placeholder="Full address including postcode"
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
+                />
+              </div>
+
+              {/* Customer Job Number */}
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-1">Customer Job Number <span className="font-normal text-gray-400">(optional)</span></label>
+                <input
+                  type="text"
+                  value={form.customer_job_number}
+                  onChange={e => setForm(f => ({ ...f, customer_job_number: e.target.value }))}
+                  placeholder="e.g. WO-12345"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
                 />
               </div>
 
