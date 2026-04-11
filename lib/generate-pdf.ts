@@ -62,26 +62,32 @@ export async function generateSubmissionPDF(submission: {
   y += 4
 
   // Label maps for known question IDs
+  // IDs 1-42 + 175 = GOW/fire-ppm app
+  // IDs 1-27 (different scheme) = lfl-ppm app
+  // Both use c1/c2/etc for callout questions
   const QUESTION_LABELS: Record<string, string | null> = {
-    // Callout questions
+    // Callout questions (both apps)
     c1: 'Work Carried Out', c2: 'Picture', c3: 'Equipment Used', c4: 'Number of Engineers',
     c6: 'System Current Status', c8t: 'Time on Site', c7: 'Return Visit Required',
     c8: 'Engineer Sign Off', c9: 'Customer Sign Off',
-    // PPM questions
+    // GOW/fire-ppm PPM questions
     1: 'Date of Service', 2: 'Next Service Date', 3: 'Logbook / Defects',
     4: 'Defects Document', 5: 'Call Points Visible', 6: 'Exits – Call Points',
     7: 'New Partitions', 8: 'Storage Clearance', 9: 'Detector Clearance',
     10: 'Occupancy Changes', 11: 'Cable Condition', 12: 'False Alarm Records',
     13: 'Battery Condition', 14: 'Battery Voltage', 15: 'Charge Voltage',
-    16: 'Battery Load Test', 17: 'Batteries >4 Years', 18: 'Battery Calculation',
+    16: 'Battery Load Test', 17: 'Batteries >4 Years',
+    // ID 18: lfl-ppm = Battery Calculation; GOW = Call Point Switches (both handled by battery calc formatter)
+    18: 'Battery Calculation',
     19: 'Areas / Zones Tested', 20: 'Detectors Tested', 21: 'Call Points Tested',
-    22: 'ARC Signalling', 23: 'Remote Signalling', 24: 'Fire Brigade Link',
-    25: 'Sounders / Visual', 26: 'Beam Detectors', 27: 'Aspirating Systems',
-    28: 'Suppression Systems', 29: 'Door Holders', 30: 'Cause & Effect',
-    31: 'Voice Alarm', 32: 'Ancillary Equipment', 33: 'PAVA System',
-    34: 'PAVA Batteries', 35: 'PAVA Signalling', 36: 'Photo – PAVA Batteries',
-    37: 'Photo – Fire Panel', 38: 'Panel Clean', 39: 'Defects Identified',
-    40: 'Outstanding Defects', 41: 'Comments', 42: 'Next Service',
+    22: 'ARC Signalling', 23: 'CIE Buttons & Display', 24: 'CIE Zonal Indicators',
+    25: 'Cause & Effect', 26: 'Fault Indicators', 27: 'Zone Plan Fitted',
+    28: 'Printers & Consumables', 29: 'Analogue Values', 30: 'Radio Systems',
+    31: 'Further Checks', 32: 'Defects Reported', 33: 'PAVA System',
+    34: 'PAVA Faults', 35: 'PAVA Batteries Dated', 36: 'Photo – PAVA Batteries',
+    37: 'Photo – Fire Panel', 38: 'Logbook Completed', 39: 'Defects Identified',
+    40: 'Additional Notes', 41: 'Engineer Signature', 42: 'Customer Signature',
+    175: 'Battery Calculation',  // GOW app battery calc question (ID 175)
     // Follow-up (excluded from main callout PDF)
     cf1: null, cf2: null, cf3: null,
     customer_name: 'Customer Name',
