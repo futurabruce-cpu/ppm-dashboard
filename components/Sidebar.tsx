@@ -29,7 +29,7 @@ export default function Sidebar({ profile }: { profile: Profile | null }) {
       {/* ── Desktop sidebar ── */}
       <div className="hidden md:flex w-64 flex-shrink-0 flex-col" style={{ background: '#1a1a2e', minHeight: '100vh', zIndex: 40 }}>
         <Link href="/dashboard" className="px-6 py-5 border-b border-white/10 flex items-center gap-3 hover:bg-white/5 transition-colors">
-          <img src="/gow-logo.webp" alt="GOW Systems" className="w-10 h-10 object-contain rounded-lg bg-white p-0.5" />
+          <img src="/gow-logo.webp" alt="GOW Systems" className="w-10 h-10 object-contain rounded-lg" />
           <div>
             <div className="text-white font-black text-xl tracking-wide">Worksheets</div>
             <div className="text-white/50 text-xs mt-0.5">{profile?.companies?.name ?? 'Fire Alarm Services'}</div>
@@ -66,7 +66,7 @@ export default function Sidebar({ profile }: { profile: Profile | null }) {
       {/* ── Mobile top bar ── */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3" style={{ background: '#1a1a2e' }}>
         <Link href="/dashboard" className="flex items-center gap-2">
-          <img src="/gow-logo.webp" alt="GOW" className="w-8 h-8 object-contain rounded bg-white p-0.5" />
+          <img src="/gow-logo.webp" alt="GOW" className="w-8 h-8 object-contain rounded" />
           <div>
             <div className="text-white font-black text-base tracking-wide">Worksheets</div>
             <div className="text-white/50 text-xs">{profile?.companies?.name ?? ''}</div>
