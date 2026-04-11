@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseAdminClient } from '@/lib/supabase/admin'
 import { generateSubmissionPDF } from '@/lib/generate-pdf'
+import { generateLFLPDF } from '@/lib/generate-lfl-pdf'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -40,10 +41,17 @@ export async function POST(req: NextRequest) {
 
   let pdf_url: string | null = null
 
-  // For lfl (Ladrillos) sheets, the device generates and uploads the authoritative PDF
-  // so skip server-side generation — it will be set via /api/upload-pdf
-  if (sheet_type !== 'lfl') try {
-    const pdfBuf = await generateSubmissionPDF({
+  // Generate PDF server-side for all sheet types
+  try {
+    const pdfBuf = sheet_type === 'lfl'
+      ? await generateLFLPDF({
+          site_name, site_address, service_date, answers,
+          engineer_name: profile.full_name || authUser.email?.split('@')[0] || null,
+          loc_ref: answers['loc_ref'] as string | null,
+          cert_no: answers['cert_no'] as string | null,
+          service_type: answers['service_type'] as string | null,
+        })
+      : await generateSubmissionPDF({
       sheet_type,
       site_name,
       site_address,

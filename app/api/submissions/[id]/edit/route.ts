@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSupabaseAdminClient } from '@/lib/supabase/admin'
 import { generateSubmissionPDF } from '@/lib/generate-pdf'
+import { generateLFLPDF } from '@/lib/generate-lfl-pdf'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -56,16 +57,23 @@ export async function PATCH(
 
   // Regenerate PDF
   try {
-    const pdfBuf = await generateSubmissionPDF({
-      sheet_type: sheet_type ?? 'voca',
-      site_name,
-      site_address,
-      service_date,
-      answers: answers ?? {},
-      engineer_name: engineer_name ?? '',
-      company_name: company_name ?? null,
-      job_type: job_type ?? null,
-    })
+    const pdfBuf = (sheet_type === 'lfl')
+      ? await generateLFLPDF({
+          site_name, site_address, service_date,
+          answers: answers ?? {},
+          engineer_name: engineer_name ?? '',
+          loc_ref: answers?.['loc_ref'] as string | null,
+          cert_no: answers?.['cert_no'] as string | null,
+          service_type: answers?.['service_type'] as string | null,
+        })
+      : await generateSubmissionPDF({
+          sheet_type: sheet_type ?? 'voca',
+          site_name, site_address, service_date,
+          answers: answers ?? {},
+          engineer_name: engineer_name ?? '',
+          company_name: company_name ?? null,
+          job_type: job_type ?? null,
+        })
 
     const filename = `edited-${id}-${Date.now()}.pdf`
     const { error: uploadErr } = await admin.storage
