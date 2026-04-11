@@ -281,7 +281,7 @@ export async function generateFollowUpPDF(followUp: {
   }
 
   doc.setFontSize(7); doc.setTextColor(160, 160, 160); doc.setFont('helvetica', 'normal')
-  doc.text('GOW Systems | Follow Up Report', pageW / 2, 293, { align: 'center' })
+  doc.text(`${followUp.company_name || 'GOW Systems'} | Follow Up Report`, pageW / 2, 293, { align: 'center' })
 
   return Buffer.from(doc.output('arraybuffer'))
 }
