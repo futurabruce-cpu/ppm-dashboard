@@ -28,9 +28,9 @@ export default function Sidebar({ profile }: { profile: Profile | null }) {
     <>
       {/* ── Desktop sidebar ── */}
       <div className="hidden md:flex w-64 flex-shrink-0 flex-col" style={{ background: '#1a1a2e', minHeight: '100vh', zIndex: 40 }}>
-        <Link href="/dashboard" className="px-6 py-5 border-b border-white/10 flex items-center gap-3 hover:bg-white/5 transition-colors">
-          <img src="/gow-logo.webp" alt="GOW Systems" className="w-10 h-10 object-contain rounded-lg" />
-          <div>
+        <Link href="/dashboard" className="px-6 py-6 border-b border-white/10 flex flex-col items-center gap-3 hover:bg-white/5 transition-colors">
+          <img src="/gow-logo.webp" alt="GOW Systems" className="w-24 h-24 object-contain rounded-xl" />
+          <div className="text-center">
             <div className="text-white font-black text-xl tracking-wide">Worksheets</div>
             <div className="text-white/50 text-xs mt-0.5">{profile?.companies?.name ?? 'Fire Alarm Services'}</div>
           </div>
