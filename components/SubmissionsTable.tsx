@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -75,12 +76,54 @@ function StatusDropdown({ id, status, isAdmin }: { id: string; status: string | 
 
 export default function SubmissionsTable({ submissions, profile, engineers, filters }: Props) {
   const router = useRouter()
+  const isAdmin = profile.role !== 'engineer'
+  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [deleting, setDeleting] = useState(false)
 
   function applyFilter(key: string, value: string) {
     const params = new URLSearchParams(window.location.search)
     if (value) params.set(key, value)
     else params.delete(key)
     router.push('/dashboard/submissions?' + params.toString())
+  }
+
+  function toggleOne(id: string) {
+    setSelected(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function toggleAll() {
+    if (selected.size === submissions.length) {
+      setSelected(new Set())
+    } else {
+      setSelected(new Set(submissions.map(s => s.id)))
+    }
+  }
+
+  async function handleDelete() {
+    if (selected.size === 0) return
+    const confirmed = window.confirm(`Delete ${selected.size} worksheet${selected.size > 1 ? 's' : ''}? This cannot be undone.`)
+    if (!confirmed) return
+    setDeleting(true)
+    try {
+      const res = await fetch('/api/submissions/bulk-delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: Array.from(selected) }),
+      })
+      if (res.ok) {
+        setSelected(new Set())
+        router.refresh()
+      } else {
+        alert('Failed to delete. Please try again.')
+      }
+    } finally {
+      setDeleting(false)
+    }
   }
 
   return (
@@ -102,6 +145,7 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
           className="w-36 border border-gray-200 rounded-xl px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
         />
       </div>
+
       {/* Filters */}
       <div className="flex flex-wrap gap-2 mb-5">
         <select
@@ -181,6 +225,26 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
         </label>
       </div>
 
+      {/* Bulk delete bar */}
+      {isAdmin && selected.size > 0 && (
+        <div className="mb-4 flex items-center gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+          <span className="text-sm font-semibold text-red-700">{selected.size} selected</span>
+          <button
+            onClick={handleDelete}
+            disabled={deleting}
+            className="px-4 py-1.5 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white text-sm font-bold rounded-lg transition-colors"
+          >
+            {deleting ? 'Deleting…' : `🗑 Delete ${selected.size}`}
+          </button>
+          <button
+            onClick={() => setSelected(new Set())}
+            className="text-sm text-red-500 hover:text-red-700 font-medium"
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+
       {submissions.length === 0 ? (
         <div className="text-center py-16 text-gray-400 bg-white rounded-xl shadow-sm border border-gray-100">
           <div className="text-4xl mb-3">📋</div>
@@ -192,12 +256,22 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
           {/* Mobile cards */}
           <div className="flex flex-col gap-3 md:hidden">
             {submissions.map(s => (
-              <div key={s.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+              <div key={s.id} className={`bg-white rounded-xl shadow-sm border p-4 transition-colors ${selected.has(s.id) ? 'border-red-400 bg-red-50/30' : 'border-gray-100'}`}>
                 <div className="flex items-start justify-between mb-2">
-                  <div>
-                    {s.job_number && <div className="font-mono text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded mb-1 inline-block">{s.job_number}</div>}
-                    <div className="font-bold text-gray-900 text-base">{s.site_name ?? '—'}</div>
-                    {s.site_address && <div className="text-gray-500 text-xs mt-0.5">{s.site_address}</div>}
+                  <div className="flex items-start gap-3">
+                    {isAdmin && (
+                      <input
+                        type="checkbox"
+                        checked={selected.has(s.id)}
+                        onChange={() => toggleOne(s.id)}
+                        className="accent-red-500 w-4 h-4 mt-1 shrink-0"
+                      />
+                    )}
+                    <div>
+                      {s.job_number && <div className="font-mono text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded mb-1 inline-block">{s.job_number}</div>}
+                      <div className="font-bold text-gray-900 text-base">{s.site_name ?? '—'}</div>
+                      {s.site_address && <div className="text-gray-500 text-xs mt-0.5">{s.site_address}</div>}
+                    </div>
                   </div>
                   <div className="flex flex-col items-end gap-1 ml-2 shrink-0">
                     <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold uppercase ${
@@ -250,6 +324,17 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
             <table className="min-w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50">
+                  {isAdmin && (
+                    <th className="px-4 py-3 w-10">
+                      <input
+                        type="checkbox"
+                        checked={selected.size === submissions.length && submissions.length > 0}
+                        onChange={toggleAll}
+                        className="accent-red-500 w-4 h-4"
+                        title="Select all"
+                      />
+                    </th>
+                  )}
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Date</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Job No</th>
                   <th className="text-left px-5 py-3 font-semibold text-gray-600">Site</th>
@@ -267,7 +352,17 @@ export default function SubmissionsTable({ submissions, profile, engineers, filt
               </thead>
               <tbody>
                 {submissions.map((s, i) => (
-                  <tr key={s.id} className={`border-b border-gray-50 hover:bg-amber-50/40 transition-colors ${i % 2 === 0 ? '' : 'bg-gray-50/30'}`}>
+                  <tr key={s.id} className={`border-b border-gray-50 transition-colors ${selected.has(s.id) ? 'bg-red-50' : i % 2 === 0 ? 'hover:bg-amber-50/40' : 'bg-gray-50/30 hover:bg-amber-50/40'}`}>
+                    {isAdmin && (
+                      <td className="px-4 py-3">
+                        <input
+                          type="checkbox"
+                          checked={selected.has(s.id)}
+                          onChange={() => toggleOne(s.id)}
+                          className="accent-red-500 w-4 h-4"
+                        />
+                      </td>
+                    )}
                     <td className="px-5 py-3 text-gray-700 whitespace-nowrap">
                       {s.service_date ? new Date(s.service_date).toLocaleDateString('en-GB') : '—'}
                     </td>
